@@ -15,10 +15,6 @@ public class PlayerController : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
 
-    void Update()
-    {
-    }
-
     void FixedUpdate() {
         float moveForward = Input.GetAxis("Vertical"); // W, S
         float moveSide = Input.GetAxis("Horizontal"); // A, D
