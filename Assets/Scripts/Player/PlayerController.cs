@@ -1,35 +1,32 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
-{
-    public float WSForce = 150f; //  Forward and backward force
-    public float ADForce = 150f; // Power left and right
-    public float turnForce = 100f; // Power turn ship
-    
+public class PlayerController : MonoBehaviour {
+    public float moveForce = 300f;  // Speed forward/backward
+    public float turnForce = 500f;  // Power turn ship
+    public float maxSpeed = 10f;    // Max speed ship
 
     private Rigidbody rb;
-    void Start()
-    {
+
+    void Start() {
         rb = GetComponent<Rigidbody>();
-        // Freeze Rotation on X and Z
+        rb.useGravity = true; // For driving on platform
+        rb.linearDamping = 2f; // Smooth braking
+        rb.angularDamping = 3f; // Smooth braking rotation
+
+        // Freeze rotation X and Z to stay upright
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
 
     void FixedUpdate() {
-        float moveForward = Input.GetAxis("Vertical"); // W, S
-        float moveSide = Input.GetAxis("Horizontal"); // A, D
+        float moveInput = Input.GetAxis("Vertical");
+        float turnInput = Input.GetAxis("Horizontal");
 
-        float turn = 0; // Speed turn
-        // Turn  key A and D 
-        if (Input.GetKey(KeyCode.A)) turn = -10f;
-        if (Input.GetKey(KeyCode.D)) turn = 10f;
+        // Check current speed
+        if (rb.linearVelocity.magnitude < maxSpeed) {
+            rb.AddRelativeForce(Vector3.forward * moveInput * moveForce);
+        }
 
-        // Movement forward  
-        rb.AddRelativeForce(Vector3.forward * moveForward * WSForce * Time.fixedDeltaTime);
-        // Movement left and right
-        rb.AddRelativeForce(Vector3.right * moveSide * ADForce * Time.fixedDeltaTime);
-        // Turn force
-        rb.AddRelativeTorque(Vector3.up * turn * turnForce * Time.fixedDeltaTime);
-    
+        // Turn ship
+        rb.AddRelativeTorque(Vector3.up * turnInput * turnForce);
     }
 }
