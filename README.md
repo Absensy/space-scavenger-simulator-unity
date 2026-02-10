@@ -1,25 +1,25 @@
-# Space Scavenger Simulator
+# 🚀 Space Scavenger Simulator
 
 A Unity-based space scavenging game where players pilot a spaceship to collect space debris using a tractor beam system.
 
-## Overview
+## 📖 Overview
 
 Space Scavenger Simulator is a physics-based space exploration game where you control a spaceship equipped with a tractor beam. Your mission is to collect space debris (trash) scattered across the environment and deliver it to your base for processing.
 
-## Features
+## ✨ Features
 
 ### Current Implementation
-- **Player Spaceship Control**: Physics-based movement with forward/backward thrust and rotation
-- **Tractor Beam System**: Target and capture space debris within range
-- **Base Collection System**: Deliver collected items to the base for processing
-- **Physics-Based Gameplay**: Realistic physics interactions with rigidbodies and joints
+- 🎮 **Player Spaceship Control**: Physics-based movement with forward/backward thrust and rotation
+- 🔮 **Tractor Beam System**: Target and capture space debris within range
+- 🏠 **Base Collection System**: Deliver collected items to the base for processing
+- ⚙️ **Physics-Based Gameplay**: Realistic physics interactions with rigidbodies and joints
 
-### Controls
+### 🎯 Controls
 - **WASD / Arrow Keys**: Move forward/backward and turn
 - **Space**: Activate tractor beam to capture targeted debris
 - **G**: Release currently held object
 
-## Technical Details
+## 🔧 Technical Details
 
 ### Unity Version
 - Unity 2022.3 LTS or later (recommended)
@@ -42,7 +42,7 @@ Assets/
     └── SampleScene.unity          # Main game scene
 ```
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 - Unity Editor 2022.3 LTS or newer
@@ -59,23 +59,23 @@ Assets/
 - Configure the base collector trigger collider
 - Set up the player's tractor beam hold point transform
 
-## MVP & Development
+## 📋 MVP & Development
 
 For detailed MVP requirements and development roadmap, see [MVP.md](MVP.md).
 
-## Known Issues
-- Debug messages in BaseCollector.cs are in Russian (need localization)
-- No visual feedback for tractor beam range
-- Missing UI elements for game state
+## ⚠️ Known Issues
+- 🐛 Debug messages in BaseCollector.cs are in Russian (need localization)
+- 👁️ No visual feedback for tractor beam range
+- 🎨 Missing UI elements for game state
 
-## Contributing
+## 🤝 Contributing
 
-This is a personal project, but suggestions and feedback are welcome!
+This is a personal project, but suggestions and feedback are welcome! 💡
 
-## License
+## 📄 License
 
 See LICENSE file for details.
 
-## Credits
+## 🙏 Credits
 
 Developed using Unity Engine and Universal Render Pipeline.
