@@ -2,18 +2,18 @@ using UnityEngine;
 
 public class TractorBeam : MonoBehaviour {
     [Header("Settings")]
-    public float pullPower = 300f;
-    public float rangeBeam = 25f;
-    public LayerMask ignoreLayer;
+    public float pullPower = 500f; // Strength of the tractor beam
+    public float rangeBeam = 25f;  // Raycast distance
+    public LayerMask ignoreLayer;  // Set to 'Player' layer
 
     [Header("References")]
-    public Transform holdPoint;
+    public Transform holdPoint;    // The point where trash will be attached
 
     private LineRenderer line;
     private GameObject lockedObject;
     private Rigidbody lockedRb;
-    private FixedJoint joint; // New: invisible "welding"
     private bool isHolding = false;
+    private bool isAttached = false;
 
     void Start() {
         line = GetComponent<LineRenderer>();
@@ -21,13 +21,16 @@ public class TractorBeam : MonoBehaviour {
     }
 
     void Update() {
+        // Activation
         if (Input.GetKeyDown(KeyCode.Space) && !isHolding) SearchTarget();
+        // Release
         if (Input.GetKeyDown(KeyCode.G)) Release();
 
+        // Visual beam
         if (isHolding && lockedObject != null) {
             line.enabled = true;
-            line.SetPosition(0, transform.position);
-            line.SetPosition(1, lockedObject.transform.position);
+            line.SetPosition(0, transform.position); // Start at the beam origin
+            line.SetPosition(1, lockedObject.transform.position); // End at the trash
         }
         else {
             line.enabled = false;
@@ -35,58 +38,80 @@ public class TractorBeam : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        if (isHolding && lockedObject != null && joint == null) {
+        if (isHolding && lockedObject != null && !isAttached) {
             float distance = Vector3.Distance(lockedObject.transform.position, holdPoint.position);
 
-            if (distance > 0.4f) {
-                // Pulling
+            // Increased distance to 0.8f to ensure capture even with large colliders
+            if (distance > 0.8f) {
+                // PHASE 1: Pulling
                 Vector3 direction = holdPoint.position - lockedObject.transform.position;
                 lockedRb.AddForce(direction.normalized * pullPower);
                 lockedRb.linearVelocity *= 0.9f;
             }
             else {
-                // LOCK WITHOUT PARENTING (No scale issues!)
-                CaptureWithJoint();
+                // PHASE 2: Hard Attachment
+                CaptureHard();
             }
         }
     }
 
     private void SearchTarget() {
         RaycastHit hit;
+        // Start ray from holdPoint to prevent hitting ship's internal colliders
         if (Physics.Raycast(holdPoint.position, transform.forward, out hit, rangeBeam, ~ignoreLayer)) {
             if (hit.collider.CompareTag("Trash")) {
                 lockedObject = hit.collider.gameObject;
                 lockedRb = lockedObject.GetComponent<Rigidbody>();
                 isHolding = true;
+                isAttached = false;
             }
         }
     }
 
-    private void CaptureWithJoint() {
+    private void CaptureHard() {
+        isAttached = true;
+
+        // Save world scale BEFORE parenting to prevent distortion
+        Vector3 originalWorldScale = lockedObject.transform.lossyScale;
+
+        // Disable physics
+        lockedRb.isKinematic = true;
         lockedRb.linearVelocity = Vector3.zero;
         lockedRb.angularVelocity = Vector3.zero;
-        lockedObject.transform.position = holdPoint.position;
-        lockedObject.transform.rotation = holdPoint.rotation;
-        lockedRb.mass = 0.001f;
-        joint = gameObject.AddComponent<FixedJoint>();
-        joint.connectedBody = lockedRb;
-        joint.breakForce = Mathf.Infinity;
-        joint.breakTorque = Mathf.Infinity;
+
+        // Disable collisions
         Collider col = lockedObject.GetComponent<Collider>();
         if (col != null) col.enabled = false;
+
+        // Parenting
+        lockedObject.transform.SetParent(holdPoint);
+
+        // Reset position and rotation relative to holdPoint
+        lockedObject.transform.localPosition = Vector3.zero;
+        lockedObject.transform.localRotation = Quaternion.identity;
+
+        // We set local scale based on original size vs current parent size
+        Vector3 currentParentScale = holdPoint.lossyScale;
+        lockedObject.transform.localScale = new Vector3(
+            originalWorldScale.x / currentParentScale.x,
+            originalWorldScale.y / currentParentScale.y,
+            originalWorldScale.z / currentParentScale.z
+        );
     }
 
     private void Release() {
         if (lockedObject != null) {
-            // Destroy welding
-            if (joint != null) Destroy(joint);
-            lockedRb.mass = 1.0f;
+            lockedObject.transform.SetParent(null);
+            lockedRb.isKinematic = false;
+
             Collider col = lockedObject.GetComponent<Collider>();
             if (col != null) col.enabled = true;
 
-            lockedRb.AddForce(transform.forward * 5f, ForceMode.Impulse);
+            // Push forward on release
+            lockedRb.AddForce(transform.forward * 10f, ForceMode.Impulse);
             lockedObject = null;
         }
         isHolding = false;
+        isAttached = false;
     }
 }
