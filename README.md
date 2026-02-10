@@ -2,6 +2,8 @@
 
 A Unity-based space scavenging game where players pilot a spaceship to collect space debris using a tractor beam system.
 
+> 🇷🇺 [Русская версия](README_RU.md) | 🇬🇧 [English version](README.md)
+
 ## 📖 Overview
 
 Space Scavenger Simulator is a physics-based space exploration game where you control a spaceship equipped with a tractor beam. Your mission is to collect space debris (trash) scattered across the environment and deliver it to your base for processing.

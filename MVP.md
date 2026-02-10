@@ -2,6 +2,8 @@
 
 This document outlines the Minimum Viable Product (MVP) requirements and development roadmap for Space Scavenger Simulator.
 
+> 🇷🇺 [Русская версия](MVP_RU.md) | 🇬🇧 [English version](MVP.md)
+
 ## 📋 MVP Requirements
 
 ### 🎮 Core Gameplay Loop (Phase 1)
